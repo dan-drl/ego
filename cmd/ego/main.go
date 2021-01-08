@@ -9,9 +9,10 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/infinitbyte/ego"
 	"io/ioutil"
 	"strings"
+
+	"github.com/dan-drl/ego"
 )
 
 // version is set by the makefile during build.
@@ -58,7 +59,7 @@ func main() {
 
 }
 
-func processTemplate(templates []*ego.Template,pkgname string,outfile string)  {
+func processTemplate(templates []*ego.Template, pkgname string, outfile string) {
 	//fmt.Println("process template, output:",outfile,",package:"+pkgname)
 
 	// Write package to output file.
@@ -88,10 +89,9 @@ func processTemplate(templates []*ego.Template,pkgname string,outfile string)  {
 
 // visitor iterates over
 type visitor struct {
-
 }
 
-func (v *visitor)listAll(path string) {
+func (v *visitor) listAll(path string) {
 	//fmt.Println("process path:",path)
 
 	files, _ := ioutil.ReadDir(path)
@@ -101,12 +101,11 @@ func (v *visitor)listAll(path string) {
 			v.listAll(path + "/" + fi.Name())
 			//println(path + "/" + fi.Name())
 		}
-		if (filepath.Ext(fi.Name()) == ".ego" ||filepath.Ext(fi.Name()) == ".html"||filepath.Ext(fi.Name()) == ".htm") {
+		if filepath.Ext(fi.Name()) == ".ego" || filepath.Ext(fi.Name()) == ".html" || filepath.Ext(fi.Name()) == ".htm" {
 			//println(path + "/" + fi.Name())
-			paths = append(paths, path + "/" + fi.Name())
+			paths = append(paths, path+"/"+fi.Name())
 		}
 	}
-
 
 	//fmt.Println("generate template:",path)
 	// Parse every template file.
@@ -114,7 +113,7 @@ func (v *visitor)listAll(path string) {
 	for _, path := range paths {
 		t, err := ego.ParseFile(path)
 		if err != nil {
-			log.Fatal("parse file, ",path,", ", err)
+			log.Fatal("parse file, ", path, ", ", err)
 		}
 		templates = append(templates, t)
 	}
@@ -124,14 +123,14 @@ func (v *visitor)listAll(path string) {
 		return
 	}
 
-	ap,_:=filepath.Abs(path)
-	as:=strings.Split(ap,"/")
+	ap, _ := filepath.Abs(path)
+	as := strings.Split(ap, "/")
 
-	lastDirName:=as[len(as)-1]
+	lastDirName := as[len(as)-1]
 
 	//fmt.Println("path name: ",lastDirName)
 
-	processTemplate(templates,lastDirName,path+"/ego.go")
+	processTemplate(templates, lastDirName, path+"/ego.go")
 }
 
 //func (v *visitor) visit(path string, info os.FileInfo, err error) error {
